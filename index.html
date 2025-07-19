@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charts, Chords & Counterattacks</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap" rel="stylesheet">
+
+  <style>
+    /* =====================  CSS VARIABLES  ===================== */
+    :root {
+      --bg: #d6d4df;
+      --bg-light: #e7e6ef;
+      --accent: #c82b50;
+      --text-dark: #222;
+      --text-mid: #444;
+    }
+
+    /* =====================  GLOBAL RESET  ===================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: monospace;
+      line-height: 1.7;
+      color: var(--text-dark);
+      background: radial-gradient(circle at 20% 20%, var(--bg-light) 0%, var(--bg) 60%);
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    /* ---------- Decorative background blobs (musical note & ball silhouettes) ---------- */
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.12;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+      background: var(--accent);
+      filter: blur(80px);
+      z-index: -1;
+    }
+    body::before {
+      width: 300px; height: 300px;
+      top: -100px; left: -100px;
+    }
+    body::after {
+      width: 240px; height: 240px;
+      bottom: -80px; right: -60px;
+    }
+
+    /* =====================  HEADER  ===================== */
+    header {
+      text-align: center;
+      padding: 4rem 1.2rem 2rem;
+      position: relative;
+    }
+
+    /* top‑right navigation */
+    .nav-links {
+      position: absolute;
+      top: 1.8rem;
+      right: 2.5rem;
+      display: flex;
+      gap: 1.5rem;
+      font-size: 1rem;
+    }
+    .nav-links a {
+      color: var(--text-mid);
+      text-decoration: none;
+      position: relative;
+      transition: color .2s;
+    }
+    /* animated underline */
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: -3px;
+      width: 0; height: 2px;
+      background: var(--accent);
+      transition: width .25s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { width: 100%; }
+
+    h1 {
+      font-family: 'Rubik Moonrocks', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 6rem); /* ~2× bigger */
+      color: var(--accent);
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.05);
+      margin-bottom: .6rem;
+    }
+
+    header p {
+      color: var(--text-mid);
+      font-size: 1.1rem;
+      font-style: italic;
+    }
+
+    /* =====================  HERO  ===================== */
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 3rem;
+      padding: 3rem 1.5rem 2rem;
+      animation: fadeUp .8s ease .2s both;
+    }
+
+    /* profile picture */
+    .profile-pic {
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 6px solid var(--accent);
+      box-shadow: 0 8px 25px rgba(0,0,0,.12);
+      margin-top: -70px; /* overlap heading */
+      transition: transform .25s ease;
+    }
+    .profile-pic:hover { transform: rotate(2deg) scale(1.03); }
+    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* bio */
+    .bio { max-width: 620px; }
+    .bio p { margin-bottom: 1.2rem; }
+
+    /* emoji list */
+    .bio ul { list-style: none; padding-left: 0; }
+    .bio ul li { margin-bottom: .9rem; position: relative; padding-left: 2.2rem; }
+    .bio ul li::before {
+      content: attr(data-emoji);
+      position: absolute; left: 0; top: 0;
+      font-size: 1.3rem;
+    }
+
+    /* keywords highlight */
+    .accent { color: var(--accent); }
+
+    /* CTA down arrow */
+    .scroll-cue {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: var(--accent);
+      cursor: pointer;
+      animation: bounce 1.6s infinite;
+    }
+
+    /* =====================  FOOTER  ===================== */
+    footer {
+      text-align: center;
+      padding: 2.5rem 0 3rem;
+    }
+    .social a {
+      margin: 0 1rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: inline-block;
+      transition: transform .2s;
+    }
+    .social a:hover { transform: scale(1.15); }
+    .social svg { width: 28px; height: 28px; fill: var(--accent); vertical-align: middle; }
+
+    /* =====================  MOBILE  ===================== */
+    @media (max-width: 620px) {
+      .container { flex-direction: column; text-align: center; }
+      .profile-pic { margin-top: -40px; }
+
+      /* sticky bottom nav */
+      .nav-links {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: rgba(255,255,255,.8);
+        backdrop-filter: blur(6px);
+        justify-content: space-around;
+        padding: .6rem 0;
+      }
+    }
+
+    /* =====================  KEYFRAMES  ===================== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%,20%,50%,80%,100% { transform: translateY(0); }
+      40% { transform: translateY(-8px); }
+      60% { transform: translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV BAR ============ -->
+  <header>
+    <nav class="nav-links">
+      <a href="#works">📂 Works</a>
+      <a href="#talks">🎤 Talks</a>
+      <a href="#contact">✉️ Contact</a>
+    </nav>
+
+    <h1>Charts, Chords & Counterattacks</h1>
+    <p>Mixing data with melodies (Ilaiyaraaja on loop) and matchdays (Arsenal forever)</p>
+  </header>
+
+  <!-- ============ HERO SECTION ============ -->
+  <section class="container">
+    <div class="profile-pic">
+      <img src="IMG-20250107-WA0037-removebg-preview.png" alt="Navaneeth" />
+    </div>
+
+    <div class="bio">
+      <p><strong class="accent">Hey there! I'm Navaneeth</strong> — Research Fellow at the Department of Journalism and Mass Communication, University of Calicut. By day, I teach and create data visualizations. By night… well, I still do the same, but with more coffee and color palettes.</p>
+
+      <p>Right now, I'm teaming up with my students to build a launchpad for their data stories — because good work deserves a great stage.</p>
+
+      <p>Also, a few facts about me:</p>
+      <ul>
+        <li data-emoji="🎵">I am a massive Ilaiyaraaja fan, though I have deep love for Devarajan Master, MSV, Johnson Master, and ARR too.</li>
+        <li data-emoji="🍳">MasterChef binge-watcher — yes, I like to imagine I am eating the things they make while having my food.</li>
+        <li data-emoji="⚽">Arsenal supporter (since 2003) — it all started with Robert Pires and that glorious hair flying down the flanks.</li>
+        <li data-emoji="🚀">I'm not a master of many things, but I'm always learning something.</li>
+      </ul>
+
+      <a href="#works" class="scroll-cue">See my work ↓</a>
+    </div>
+  </section>
+
+  <!-- Placeholder sections -->
+  <section id="works" style="min-height:60vh; display:flex; align-items:center; justify-content:center;">
+    <h2 style="font-family: monospace; font-size:2rem; color:var(--accent);">Works section coming soon…</h2>
+  </section>
+
+  <section id="talks" style="min-height:60vh; display:flex; align-items:center; justify-content:center;">
+    <h2 style="font-family: monospace; font-size:2rem; color:var(--accent);">Talks section coming soon…</h2>
+  </section>
+
+  <section id="contact" style="min-height:40vh; display:flex; align-items:center; justify-content:center;">
+    <h2 style="font-family: monospace; font-size:2rem; color:var(--accent);">Let’s connect!</h2>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="social">
+      <a href="mailto:navaneeth.mcj@gmail.com" title="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18v-9.5l7.5 5.5a1 1 0 001 0L20 8.5V18H4z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/navaneeth-tm/" target="_blank" title="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.75 0h4.8v2.18h.07c.67-1.25 2.3-2.58 4.73-2.58C21.18 7.6 24 10.02 24 14.15V24h-5v-8.25c0-1.96-.04-4.5-2.75-4.5-2.75 0-3.17 2.14-3.17 4.35V24h-5V8z"/></svg>
+      </a>
+    </div>
+  </footer>
+</body>
+</html>
